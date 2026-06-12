@@ -123,7 +123,7 @@ class TestComputeWindowStats:
         for _ in range(20):
             self.processor.add_to_buffer(make_valid_reading())
         # Buffer length should be <= window_size
-        buf = self.processor._buffer.get(location, [])
+        buf = self.processor._buffers.get(location, [])
         assert len(buf) <= self.processor.window_size
 
 

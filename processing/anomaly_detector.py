@@ -214,7 +214,7 @@ class AnomalyDetector:
             return False
 
         diffs = [values[i + 1] - values[i] for i in range(len(values) - 1)]
-        monotonic_up = all(d >= 0 for d in diffs)
+        monotonic_up = all(d >= 0 for d in diffs) and any(d > 0 for d in diffs)
 
         if monotonic_up:
             logger.debug(
