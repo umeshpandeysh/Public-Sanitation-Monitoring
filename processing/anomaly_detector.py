@@ -300,70 +300,76 @@ class AnomalyDetector:
         }
 
     # ------------------------------------------------------------------
-    # IsolationForest (conditional)
+    # IsolationForest (conditional support)
     # ------------------------------------------------------------------
 
-    if SKLEARN_AVAILABLE:
+    def fit_isolation_forest(
+        self,
+        historical_data: pd.DataFrame,
+        contamination: float = 0.05,
+    ) -> None:
+        """
+        Fit an IsolationForest model on *historical_data*.
 
-        def fit_isolation_forest(
-            self,
-            historical_data: pd.DataFrame,
-            contamination: float = 0.05,
-        ) -> None:
-            """
-            Fit an IsolationForest model on *historical_data*.
+        Parameters
+        ----------
+        historical_data : pd.DataFrame
+            Must contain the five sensor columns.
+        contamination : float
+            Expected fraction of outliers. Default 0.05.
+        """
+        if not SKLEARN_AVAILABLE:
+            logger.warning("scikit-learn not available — IsolationForest fitting disabled.")
+            return
 
-            Parameters
-            ----------
-            historical_data : pd.DataFrame
-                Must contain the five sensor columns.
-            contamination : float
-                Expected fraction of outliers. Default 0.05.
-            """
-            available = [c for c in self.SENSOR_COLUMNS if c in historical_data.columns]
-            X = historical_data[available].dropna()
-            if len(X) < 20:
-                logger.warning(
-                    "Too few samples (%d) to fit IsolationForest reliably.", len(X)
-                )
-                return
-
-            self._isolation_forest = IsolationForest(
-                contamination=contamination,
-                random_state=42,
-                n_estimators=100,
+        available = [c for c in self.SENSOR_COLUMNS if c in historical_data.columns]
+        X = historical_data[available].dropna()
+        if len(X) < 20:
+            logger.warning(
+                "Too few samples (%d) to fit IsolationForest reliably.", len(X)
             )
-            self._isolation_forest.fit(X)
-            self._if_fitted = True
-            logger.info(
-                "IsolationForest fitted on %d samples (contamination=%.2f).",
-                len(X), contamination,
+            return
+
+        self._isolation_forest = IsolationForest(
+            contamination=contamination,
+            random_state=42,
+            n_estimators=100,
+        )
+        self._isolation_forest.fit(X)
+        self._if_fitted = True
+        logger.info(
+            "IsolationForest fitted on %d samples (contamination=%.2f).",
+            len(X), contamination,
+        )
+
+    def detect_isolation_forest(self, reading: Dict) -> bool:
+        """
+        Return True if *reading* is classified as an outlier by the
+        fitted IsolationForest.
+
+        Parameters
+        ----------
+        reading : Dict
+
+        Returns
+        -------
+        bool
+        """
+        if not SKLEARN_AVAILABLE:
+            logger.warning("scikit-learn not available — IsolationForest detection disabled.")
+            return False
+
+        if not self._if_fitted or self._isolation_forest is None:
+            logger.warning(
+                "IsolationForest not fitted. Call fit_isolation_forest() first."
             )
+            return False
 
-        def detect_isolation_forest(self, reading: Dict) -> bool:
-            """
-            Return True if *reading* is classified as an outlier by the
-            fitted IsolationForest.
-
-            Parameters
-            ----------
-            reading : Dict
-
-            Returns
-            -------
-            bool
-            """
-            if not self._if_fitted or self._isolation_forest is None:
-                logger.warning(
-                    "IsolationForest not fitted. Call fit_isolation_forest() first."
-                )
-                return False
-
-            X = np.array(
-                [[float(reading.get(col, 0.0)) for col in self.SENSOR_COLUMNS]]
-            )
-            prediction = self._isolation_forest.predict(X)
-            is_outlier = bool(prediction[0] == -1)
-            if is_outlier:
-                logger.debug("IsolationForest flagged reading as outlier.")
-            return is_outlier
+        X = np.array(
+            [[float(reading.get(col, 0.0)) for col in self.SENSOR_COLUMNS]]
+        )
+        prediction = self._isolation_forest.predict(X)
+        is_outlier = bool(prediction[0] == -1)
+        if is_outlier:
+            logger.debug("IsolationForest flagged reading as outlier.")
+        return is_outlier
