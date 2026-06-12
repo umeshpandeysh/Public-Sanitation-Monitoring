@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.whl
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# Data files (keep only sample_readings.csv)
+data/*.csv
+!data/sample_readings.csv
+data/*.log
+logs/
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Distribution
+*.spec

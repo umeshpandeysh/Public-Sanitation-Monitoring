@@ -1,0 +1,25 @@
+thresholds:
+  nh3_ppm:
+    warning: 25.0
+    critical: 50.0
+  h2s_ppm:
+    warning: 1.0
+    critical: 5.0
+  temperature_c:
+    warning: 35.0
+    critical: 42.0
+  humidity_pct:
+    warning: 85.0
+    critical: 95.0
+  pm25_ugm3:
+    warning: 25.0
+    critical: 75.0
+
+detection:
+  window_size: 15
+  z_threshold: 3.0
+  trend_window: 10
+
+alerts:
+  log_path: data/alerts.csv
+  escalation_delay_sec: 300
