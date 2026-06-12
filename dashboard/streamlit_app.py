@@ -22,8 +22,8 @@ import sys
 # Allow imports from the project root regardless of where streamlit is launched
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import pandas as pd
-import streamlit as st
+import pandas as pd  # noqa: E402
+import streamlit as st  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Page configuration (must be first Streamlit call)
@@ -197,7 +197,7 @@ if batch_btn:
     batch = simulator.generate_batch(20, anomaly_rate=0.10 if inject_anomaly else 0.05)
     for r in batch:
         _add_reading(r["location_id"], r)
-    st.toast(f"✅ Batch of 20 readings generated across all locations.")
+    st.toast("✅ Batch of 20 readings generated across all locations.")
 
 # ---------------------------------------------------------------------------
 # Main dashboard
