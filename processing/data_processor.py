@@ -8,7 +8,7 @@ and batch CSV-based analytics pipelines.
 
 import logging
 from collections import deque
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import numpy as np
 import pandas as pd

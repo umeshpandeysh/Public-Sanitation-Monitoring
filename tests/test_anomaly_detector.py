@@ -3,11 +3,10 @@ Unit tests for processing/anomaly_detector.py
 """
 import sys
 import os
-import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from processing.anomaly_detector import AnomalyDetector
+from processing.anomaly_detector import AnomalyDetector  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

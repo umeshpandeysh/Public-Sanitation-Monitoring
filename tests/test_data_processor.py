@@ -8,7 +8,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from processing.data_processor import DataProcessor
+from processing.data_processor import DataProcessor  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -171,6 +171,6 @@ class TestAggregateHourly:
         hourly = self.processor.aggregate_hourly(df.to_dict(orient="records"))
         if isinstance(hourly, pd.DataFrame) and not hourly.empty:
             # Hour 06 → mean nh3 = 10.0
-            hour6 = hourly[hourly.index.hour == 6] if hasattr(hourly.index, 'hour') else hourly.iloc[0]
-            # Just check it doesn't crash and returns numeric data
+            val6 = hourly.loc[hourly["hour"].dt.hour == 6, "nh3_ppm"].values[0]
+            assert val6 == pytest.approx(10.0)
             assert hourly["nh3_ppm"].dtype in (float, "float64")

@@ -6,7 +6,6 @@ import pathlib
 from typing import List, Dict
 
 import pytest
-import numpy as np
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
